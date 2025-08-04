@@ -42,7 +42,8 @@ test:
     - yq --help
     - xq --help
     - tomlq --help
-    - pytest -v test/test.py
+    # Windows error: E   AttributeError: module 'os' has no attribute 'EX_OK'
+    - pytest -v test/test.py  # [not win]
   requires:
     - pip
     - pytest
