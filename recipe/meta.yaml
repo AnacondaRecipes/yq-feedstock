@@ -32,6 +32,12 @@ requirements:
     - argcomplete >=1.8.1
     - jq
 
+{% set deselect_tests = "" %}
+# PBP Linux workers do not expose symbolic /proc/<pid>/wchan (pipe_read/pipe_write),
+# so test_interrupt_reaps_jq never observes the expected block.
+{% set deselect_tests = deselect_tests + " --deselect=test/test.py::TestYq::test_interrupt_reaps_jq" %}
+{% set deselect_tests = deselect_tests + " --deselect=test/test.py::TestYqLibYaml::test_interrupt_reaps_jq" %}
+
 test:
   source_files:
     - test
@@ -43,7 +49,7 @@ test:
     - xq --help
     - tomlq --help
     # Windows error: E   AttributeError: module 'os' has no attribute 'EX_OK'
-    - pytest -vv test/test.py  # [not win]
+    - pytest -vv test/test.py {{ deselect_tests }}  # [not win]
   requires:
     - pip
     - pytest
