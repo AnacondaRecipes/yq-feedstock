@@ -1,13 +1,13 @@
 {% set name = "yq" %}
-{% set version = "4.1.1" %}
+{% set version = "4.4.5" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: ab3fc344dc4a39d833d328f080a6e794c1cb7243b05c0076ac1edce3d22caabd
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: e17b21a927d04ae33f61a7284351b69b0a539bfb73b852a04a907b79bcd15de2
 
 build:
   number: 0
@@ -23,18 +23,14 @@ requirements:
     - pip
     - python
     - hatchling
+    - hatch-vcs
   run:
     - python
     - pyyaml >=5.3.1
     - xmltodict >=0.11.0
     - tomlkit >=0.11.6
     - argcomplete >=1.8.1
-
-{% set deselect_tests = "" %}
-# Needs tomlkit's String.type (added in 0.14.0) to preserve quote style on TOML
-# edits. yq's declared minimum (tomlkit >=0.11.6) predates that, and main's
-# newest build (0.13.3) still satisfies it, so quotes aren't preserved.
-{% set deselect_tests = deselect_tests + " --deselect=test/test.py::TestYq::test_tomlq_roundtrip" %}
+    - jq
 
 test:
   source_files:
@@ -47,11 +43,12 @@ test:
     - xq --help
     - tomlq --help
     # Windows error: E   AttributeError: module 'os' has no attribute 'EX_OK'
-    - pytest -vv test/test.py {{ deselect_tests }}  # [not win]
+    - pytest -vv test/test.py  # [not win]
   requires:
     - pip
     - pytest
-    - jq
+    # Quote-style roundtrip needs tomlkit >=0.14; upstream still allows >=0.11.6.
+    - tomlkit >=0.14.0
 
 about:
   home: https://github.com/kislyuk/yq
