@@ -30,6 +30,7 @@ requirements:
     - xmltodict >=0.11.0
     - tomlkit >=0.11.6
     - argcomplete >=1.8.1
+    # yq shells out to the jq binary; not a pyproject dependency.
     - jq
 
 {% set deselect_tests = "" %}
